@@ -12,7 +12,7 @@ from pandas import read_csv as csv
 from numpy import array
 import sys
 sys.path.insert(0,'../lib/')
-from APPM5590 import simpleLR, cor, bar, cov
+from APPM5590 import simpleLR, simpleLREstimate, cor, bar, cov
 import pdb
 
 
@@ -92,6 +92,14 @@ def test_ComputerReparData():
 	assert( abs(lr['t1'] - 30.71) < 0.005)
 	assert( abs(lr['beta0HatPM'] - 2.18*3.355) < 0.0005)
 	assert( abs(lr['beta1HatPM'] - 2.18*0.505) < 0.0005)
+	assert( abs(lr['SSR']/lr['SST'] - ( 1-lr['SSE']/lr['SST'])) < 1e-14)
+	assert( abs(lr['SSR']/lr['SST'] - cor(Y,X)**2) < 1e-14)
+	assert( abs(lr['SSR']/lr['SST'] - .987) < 0.0005)
+	lrEstimate = simpleLREstimate(lr,4,0)
+
+	assert( abs(lrEstimate['seY0Hat'] - 5.67) < 0.005)
+	assert( abs(lrEstimate['seMu0Hat'] - 1.76) < 0.005)
+
 	pdb.set_trace()
 
 

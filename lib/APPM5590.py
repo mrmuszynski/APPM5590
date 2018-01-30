@@ -129,31 +129,56 @@ def simpleLR(Y,X,**kwargs):
 	#I'll probably regret returning this as a dict some day. But today
 	#I don't know enough about what I'm doing to make a better decision.
 	return {
-	'beta0Hat': beta0Hat,
-	'beta1Hat': beta1Hat,
-	'seBeta0Hat': seBeta0Hat,
-	'seBeta1Hat': seBeta1Hat,	
-	'sigmaHat': sigmaHat,	
-	'Yhat': Yhat,
-	'n': n,
-	'e': e,
-	'SSE': SSE,
-	'SST': SST,
-	'SSR': SSR,
-	't1': t1,
-	't0': t0,
-	'beta0HatPM': beta0HatPM,
-	'beta1HatPM': beta1HatPM
+		'beta0Hat': beta0Hat,
+		'beta1Hat': beta1Hat,
+		'seBeta0Hat': seBeta0Hat,
+		'seBeta1Hat': seBeta1Hat,	
+		'sigmaHat': sigmaHat,	
+		'Yhat': Yhat,
+		'n': n,
+		'e': e,
+		'SSE': SSE,
+		'SST': SST,
+		'SSR': SSR,
+		't1': t1,
+		't0': t0,
+		'beta0HatPM': beta0HatPM,
+		'beta1HatPM': beta1HatPM,
+		'Xbar': Xbar,
+		'Ybar': Ybar,
+		'X': X,
+		'Y': Y
 	}
 
 
+def simpleLREstimate(simpleLROutput,x0,criticalT):
+	'''!
+	RABE p37-8
+	'''
 
+	beta0Hat = simpleLROutput['beta0Hat']
+	beta1Hat = simpleLROutput['beta1Hat']
+	sigmaHat = simpleLROutput['sigmaHat']
+	Xbar = simpleLROutput['Xbar']
+	n = simpleLROutput['n']
+	X = simpleLROutput['X']
 
+	yHat0 = beta0Hat + beta1Hat*x0
+	muHat0 = beta0Hat + beta1Hat*x0
+	seY0Hat = sigmaHat*sqrt(1 + n**-1 + (x0 - Xbar)**2/sum((X-Xbar)**2))
+	seMu0Hat = sigmaHat*sqrt(n**-1 + (x0 - Xbar)**2/sum((X-Xbar)**2))
 
+	yHat0PM = criticalT*seY0Hat
+	muHat0PM = criticalT*seMu0Hat
 
-
-
-
+	return {
+		'yHat0': yHat0,
+		'muHat0': muHat0,
+		'seY0Hat': seY0Hat,
+		'seMu0Hat': seMu0Hat,
+		'yHat0PM': yHat0PM,
+		'muHat0PM': muHat0PM
+	}
 
 
 
