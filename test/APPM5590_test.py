@@ -11,7 +11,7 @@
 from pandas import read_csv as csv
 from numpy import array
 import sys
-sys.path.insert(0,'../lib/')
+sys.path.insert(0,'../../lib/')
 from APPM5590 import simpleLR, simpleLREstimate, cor, bar, cov
 import pdb
 
@@ -20,7 +20,7 @@ def test_Parabola():
 	'''!
 	RABE p25
 	'''
-	parabolaData = csv('../data/P029a.txt',sep='\t')
+	parabolaData = csv('../data/P025a.txt',sep='\t')
 	Y = parabolaData['Y']
 	X = parabolaData['X']
 	assert( cor(X,Y) == 0 )
@@ -30,7 +30,7 @@ def test_AnscomeQuartet():
 	'''!
 	RABE p25
 	'''	
-	anscomeData = csv('../data/P029b.txt',sep='\t')
+	anscomeData = csv('../data/P025b.txt',sep='\t')
 	Y1 = array(anscomeData['Y1'])
 	X1 = array(anscomeData['X1'])
 	Y2 = array(anscomeData['Y2'])
@@ -64,7 +64,7 @@ def test_ComputerReparData():
 	NOTE: the correlation test here doesn't match RABE. I believe this
 	to be an error in RABE, not in my code.
 	'''
-	computerRepairData = csv('../data/P031.txt',sep='\t')
+	computerRepairData = csv('../data/P027.txt',sep='\t')
 	Y = array(computerRepairData['Minutes'])
 	X = array(computerRepairData['Units'])
 

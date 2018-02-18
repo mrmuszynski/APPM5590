@@ -14,9 +14,13 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from scipy.stats import linregress, sem
 from numpy import array, sqrt, mean
+from os import sys
+sys.path.insert(0, '../../lib')
+from APPM5590 import simpleLR, simpleLREstimate
+
 def problem2d2a():
 	plt.figure()
-	f = open('../data/P029a.txt', 'r')
+	f = open('../data/P025a.txt', 'r')
 	split = f.read().split()
 	Y = np.array([float(i) for i in split[1:][1::2]])
 	X = np.array([float(i) for i in split[1:][2::2]])
@@ -27,7 +31,7 @@ def problem2d2a():
 
 def problem2d2b():
 	plt.figure()
-	f = open('../data/P031.txt', 'r')
+	f = open('../data/P027.txt', 'r')
 	split = f.read().split()
 	minutes = np.array([float(i) for i in split[1:][1::2]])
 	units = np.array([float(i) for i in split[1:][2::2]])
@@ -40,7 +44,7 @@ def problem2d3():
 	criticalT = 2.18
 	beta0hat = 4.162
 	beta1hat = 15.509
-	f = open('../data/P031.txt', 'r')
+	f = open('../data/P027.txt', 'r')
 	split = f.read().split()
 	minutes = np.array([float(i) for i in split[1:][1::2]])
 	units = np.array([float(i) for i in split[1:][2::2]])
@@ -68,32 +72,59 @@ def problem2d3():
 	plt.ylabel('Units')
 
 def problem2d12():
-	dataFile = "../data/P054.txt"
+	dataFile = "../data/P050.txt"
 	df = pd.read_csv(dataFile,sep='\t')
-	X = array(df['Sunday'])
-	Y = array(df['Daily'])
-	lr = linregress(X,Y)
-	Yhat = lr.intercept + lr.slope*X
-	sigmaHatSq = sum((Y - Yhat)**2)/(len(Y)-2)
-	sigmaHat = sqrt(sigmaHatSq)
-	Xbar = mean(X)
-	seBeta0hat = sigmaHat*sqrt(len(Y)**-1 + Xbar**2/sum((X-Xbar)**2))
-	seBeta1hat = sigmaHat/sqrt(sum((X-Xbar)**2))
-	# seBeta0hat = sem()
-	# seBeta1hat = sem()
-	df.plot.scatter('Sunday','Daily')
+	Y = array(df['Sunday'])
+	X = array(df['Daily'])
+
+	lr = simpleLR(Y,X,criticalT=2.04)
+	n = len(Y)
+	Yhat = lr['beta0Hat'] + lr['beta1Hat']*X
+	plt.figure()
+	plt.plot(X,Y,'.',markersize=10,color='blue')
+	plt.xlabel('Daily')
+	plt.ylabel('Sunday')
 	plt.title('Scatter Plot of Sunday versus Daily Newspaper Circulation' + \
 		'\n (in Thousands)')
-
-	df.plot.scatter('Sunday','Daily')
+	plt.figure()
+	plt.plot(X,Y,'.',markersize=10,color='blue')
+	plt.xlabel('Daily')
+	plt.ylabel('Sunday')
 	plt.title('Scatter Plot of Sunday versus Daily Newspaper Circulation' + \
 		'\n (in Thousands) with Least Squares Regression Line')
 
-
 	plt.plot(X, Yhat,color='red')
-	pdb.set_trace()
+	print('n: ' + str(lr['n']))
+	print('seBeta0hat: ' + str(lr['seBeta0Hat']))
+	print('seBeta1Hat: ' + str(lr['seBeta1Hat']))
+	print('beta0Hat: ' + str(lr['beta0Hat']))
+	print('beta1Hat: ' + str(lr['beta1Hat']))
+	print('beta0HatPM: ' + str(lr['beta0HatPM']))
+	print('beta1HatPM: ' + str(lr['beta1HatPM']))
+
+	lrEstimate = simpleLREstimate(lr,500,2.04)
+	yHat0 = lrEstimate['yHat0']
+	muHat0 = lrEstimate['muHat0']
+	seY0Hat = lrEstimate['seY0Hat']
+	seMu0Hat = lrEstimate['seMu0Hat']
+	print("Paper 1")
+	print("yHat0: " + str(yHat0))
+	print("muHat0: " + str(muHat0))
+	print("seY0Hat: " + str(seY0Hat))
+	print("seMu0Hat: " + str(seMu0Hat))	
+	lrEstimate = simpleLREstimate(lr,2000,2.04)
+	yHat0 = lrEstimate['yHat0']
+	muHat0 = lrEstimate['muHat0']
+	seY0Hat = lrEstimate['seY0Hat']
+	seMu0Hat = lrEstimate['seMu0Hat']
+	print("Paper 2")
+	print("yHat0: " + str(yHat0))
+	print("muHat0: " + str(muHat0))
+	print("seY0Hat: " + str(seY0Hat))
+	print("seMu0Hat: " + str(seMu0Hat))	
+
 	
-runAll = 0
+runAll = 1
 if 0 or runAll: problem2d2a()
 if 0 or runAll: problem2d2b()
 if 0 or runAll: problem2d3()
