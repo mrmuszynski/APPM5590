@@ -12,7 +12,7 @@ from pandas import read_csv as csv
 from numpy import array
 import sys
 sys.path.insert(0,'../../lib/')
-from APPM5590 import simpleLR, simpleLREstimate, cor, bar, cov
+from APPM5590 import simpleLR, simpleLREstimate, cor, bar, cov, MLR
 import pdb
 
 
@@ -58,7 +58,7 @@ def test_AnscomeQuartet():
 	assert ( abs ( lr1['beta0Hat'] - lr4['beta0Hat']) < 0.005 )
 
 
-def test_ComputerReparData():
+def test_ComputerRepairData():
 	'''!
 	RABE p27-42
 	NOTE: the correlation test here doesn't match RABE. I believe this
@@ -100,12 +100,64 @@ def test_ComputerReparData():
 	assert( abs(lrEstimate['seY0Hat'] - 5.67) < 0.005)
 	assert( abs(lrEstimate['seMu0Hat'] - 1.76) < 0.005)
 
+def test_MLRComputerRepairData():
+	cr = MLR() 
+	cr.dataFile = '../data/P027.txt'
+	cr.regress()
+	pdb.set_trace()
+	assert( abs(sum(cr.X[:,1]) - 84) < 0.5)
+	assert( abs(sum(cr.Y) - 1361) < 0.5)
+	assert( abs(cr.SST - 27768.36) < 0.005 )
+	assert( abs(cr.SSR/cr.SST - ( 1-cr.SSE/cr.SST)) < 1e-14)
+	assert( abs(cr.SSR/cr.SST - .987) < 0.0005)
+	assert( abs(cr.betaHat[0] - 4.162) < 0.0005)
+	assert( abs(cr.betaHat[1]- 15.509) < 0.0005)
+	assert( abs(cr.seBetaJ[0] - 3.355) < 0.0005)
+	assert( abs(cr.seBetaJ[1] - 0.505) < 0.0005)
+	assert( abs(cr.rSq - 0.987) < 0.0005)
+
+def test_supervisorPerformance():
+	sp = MLR()
+	sp.dataFile = '../data/P056.txt'
+	sp.regress()
+	sp.partialRegress([1,3])
 	pdb.set_trace()
 
+	assert(abs(sp.betaHat[0]-10.787) < 0.0005)
+	assert(abs(sp.betaHat[1]-0.613) < 0.0005)
+	assert(abs(sp.betaHat[2]+0.073) < 0.0005)
+	assert(abs(sp.betaHat[3]-0.320) < 0.0005)
+	#this seems to be a typo. I think RABE rounded wrong.
+	assert(abs(sp.betaHat[4]-0.081) < 0.001) 
+	assert(abs(sp.betaHat[5]-0.038) < 0.0005)
+	assert(abs(sp.betaHat[6]+0.217) < 0.0005)
 
-
-
-
+	#RABE seems to have rounded incorrectly here again
+	assert(abs(sp.seBetaJ[0]-11.589) < 0.0005)
+	assert(abs(sp.seBetaJ[1]-0.1610) < 0.00005)
+	assert(abs(sp.seBetaJ[2]-0.1357) < 0.00005)
+	assert(abs(sp.seBetaJ[3]-0.1685) < 0.00005)
+	assert(abs(sp.seBetaJ[4]-0.2215) < 0.00005)
+	assert(abs(sp.seBetaJ[5]-0.1470) < 0.00005)
+	assert(abs(sp.seBetaJ[6]-0.1782) < 0.00005)
+	assert(abs(sp.tTest[0]-0.93) < 0.005)
+	assert(abs(sp.tTest[1]-3.81) < 0.005)
+	assert(abs(sp.tTest[2]+0.54) < 0.005)
+	assert(abs(sp.tTest[3]-1.90) < 0.005)
+	assert(abs(sp.tTest[4]-0.37) < 0.005)
+	assert(abs(sp.tTest[5]-0.26) < 0.005)
+	assert(abs(sp.tTest[6]+1.22) < 0.005)
+	assert(abs(sp.sigmaHat - 7.068) < 0.0005)
+	assert(abs(sp.partialRegressions[0].betaHat[0] - 9.8709) < 0.0005)
+	assert(abs(sp.partialRegressions[0].betaHat[1] - 0.6435) < 0.0005)
+	assert(abs(sp.partialRegressions[0].betaHat[2] - 0.2112) < 0.0005)
+	assert(abs(sp.partialRegressions[0].seBetaJ[0] - 7.0610) < 0.0005)
+	assert(abs(sp.partialRegressions[0].seBetaJ[1] - 0.1185) < 0.0005)
+	assert(abs(sp.partialRegressions[0].seBetaJ[2] - 0.1344) < 0.0005)
+	assert(abs(sp.partialRegressions[0].tTest[0] - 1.40) < 0.005)
+	assert(abs(sp.partialRegressions[0].tTest[1] - 5.43) < 0.005)
+	assert(abs(sp.partialRegressions[0].tTest[2] - 1.57) < 0.005)
+	assert(abs(sp.rSq - 0.73) < 0.005)
 
 
 
