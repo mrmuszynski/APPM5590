@@ -104,7 +104,9 @@ def test_MLRComputerRepairData():
 	cr = MLR() 
 	cr.dataFile = '../data/P027.txt'
 	cr.regress()
-	pdb.set_trace()
+	seY0Hat = cr.predict(array([[1],[4]]))[1]
+	seMu0Hat = cr.predict(array([[1],[4]]))[2]
+
 	assert( abs(sum(cr.X[:,1]) - 84) < 0.5)
 	assert( abs(sum(cr.Y) - 1361) < 0.5)
 	assert( abs(cr.SST - 27768.36) < 0.005 )
@@ -115,13 +117,17 @@ def test_MLRComputerRepairData():
 	assert( abs(cr.seBetaJ[0] - 3.355) < 0.0005)
 	assert( abs(cr.seBetaJ[1] - 0.505) < 0.0005)
 	assert( abs(cr.rSq - 0.987) < 0.0005)
+	assert( abs(seY0Hat - 5.67) < 0.005)
+	assert( abs(seMu0Hat - 1.76) < 0.005)
 
 def test_supervisorPerformance():
 	sp = MLR()
 	sp.dataFile = '../data/P056.txt'
 	sp.regress()
-	sp.partialRegress([1,3])
-	pdb.set_trace()
+	sp.partialRegress([2,4,5,6])
+	sp.partialRegress([3,4,5,6])
+	sp.partialRegress([2,3,4,5,6])
+	sp.partialRegress([1,2,3,4,5,6])
 
 	assert(abs(sp.betaHat[0]-10.787) < 0.0005)
 	assert(abs(sp.betaHat[1]-0.613) < 0.0005)
@@ -131,6 +137,7 @@ def test_supervisorPerformance():
 	assert(abs(sp.betaHat[4]-0.081) < 0.001) 
 	assert(abs(sp.betaHat[5]-0.038) < 0.0005)
 	assert(abs(sp.betaHat[6]+0.217) < 0.0005)
+	pdb.set_trace()
 
 	#RABE seems to have rounded incorrectly here again
 	assert(abs(sp.seBetaJ[0]-11.589) < 0.0005)
@@ -159,8 +166,15 @@ def test_supervisorPerformance():
 	assert(abs(sp.partialRegressions[0].tTest[2] - 1.57) < 0.005)
 	assert(abs(sp.rSq - 0.73) < 0.005)
 
+	#examples from section 3.5 on p58
+	assert(abs(sp.partialRegressions[1].betaHat[0] - 15.3276) < 0.00005)
+	assert(abs(sp.partialRegressions[1].betaHat[1] - 0.7803) < 0.00005)
+	assert(abs(sp.partialRegressions[1].betaHat[2] + 0.0502) < 0.00005)
+	assert(abs(sp.partialRegressions[2].betaHat[0] - 14.3763) < 0.00005)
+	assert(abs(sp.partialRegressions[2].betaHat[1] - 0.754610) < 0.0000005)
 
-
-
-
+	#examples from section 3.9.1 on p66 and 3.9.2 on p67
+	assert(abs(sp.fTest[3] - 10.50) < 0.005)
+	#another truncated value?
+	assert(abs(sp.fTest[0] - 0.528) < 0.001)
 
