@@ -137,7 +137,6 @@ def test_supervisorPerformance():
 	assert(abs(sp.betaHat[4]-0.081) < 0.001) 
 	assert(abs(sp.betaHat[5]-0.038) < 0.0005)
 	assert(abs(sp.betaHat[6]+0.217) < 0.0005)
-	pdb.set_trace()
 
 	#RABE seems to have rounded incorrectly here again
 	assert(abs(sp.seBetaJ[0]-11.589) < 0.0005)
@@ -177,4 +176,108 @@ def test_supervisorPerformance():
 	assert(abs(sp.fTest[3] - 10.50) < 0.005)
 	#another truncated value?
 	assert(abs(sp.fTest[0] - 0.528) < 0.001)
+
+def test_salarySurvey():
+	salarySurvey = MLR()
+	salarySurvey.dataFile = '../data/P122.txt'
+	salarySurvey.regress(catVars=[2])
+
+	#WTF is up with this first value? I have a hard time believing
+	#that only one could be wrong. Maybe a typo? No... I think that
+	#RABE rounds all of these to 6 digits, but then reports out to 
+	#3 decimal places... I fixed muy tests to only test the things
+	#that he seems to care about
+	assert(abs(salarySurvey.betaHat[0] - 11031.800) < 0.01)
+	assert(abs(salarySurvey.betaHat[1] -  546.184) < 0.0005)
+	assert(abs(salarySurvey.betaHat[2] + 2996.210) < 0.005)
+	assert(abs(salarySurvey.betaHat[3] - 147.825) < 0.0005)
+	assert(abs(salarySurvey.betaHat[4] - 6883.530) < 0.005)
+
+	assert(abs(salarySurvey.seBetaJ[0] - 383.2) < 0.05)
+	assert(abs(salarySurvey.seBetaJ[1] -  30.5) < 0.05)
+	assert(abs(salarySurvey.seBetaJ[2] - 411.8) < 0.05)
+	assert(abs(salarySurvey.seBetaJ[3] - 387.7) < 0.05)
+	assert(abs(salarySurvey.seBetaJ[4] - 313.9) < 0.05)
+
+	assert(abs(salarySurvey.tTest[0] -  28.8) < 0.05)
+	assert(abs(salarySurvey.tTest[1] -  17.9) < 0.05)
+	assert(abs(salarySurvey.tTest[2] +  7.28) < 0.005)
+	assert(abs(salarySurvey.tTest[3] -  0.38) < 0.005)
+	assert(abs(salarySurvey.tTest[4] -  21.9) < 0.05)
+
+	assert(abs(salarySurvey.rSq - 0.957) < 0.0005)
+	assert(abs(salarySurvey.sigmaHat - 1027) < 0.5)
+
+
+	salarySurvey.regress(catVars=[2],intVars=[(2,4),(3,4)])
+	salarySurvey
+
+	assert(abs(salarySurvey.betaHat[0] - 11203.40) < 0.05)
+	assert(abs(salarySurvey.betaHat[1] -  496.99) < 0.005)
+	assert(abs(salarySurvey.betaHat[2] + 1730.75) < 0.005)
+	assert(abs(salarySurvey.betaHat[3] + 349.08) < 0.005)
+	assert(abs(salarySurvey.betaHat[4] - 7047.41) < 0.05)
+	assert(abs(salarySurvey.betaHat[5] + 3066.04) < 0.005)
+	assert(abs(salarySurvey.betaHat[6] - 1836.49) < 0.05)
+
+	assert(abs(salarySurvey.seBetaJ[0] - 79.07) < 0.005)
+	assert(abs(salarySurvey.seBetaJ[1] -  5.57) < 0.05)
+	assert(abs(salarySurvey.seBetaJ[2] - 105.30) < 0.05)
+	assert(abs(salarySurvey.seBetaJ[3] - 97.57) < 0.005)
+	assert(abs(salarySurvey.seBetaJ[4] - 102.6) < 0.05)
+	assert(abs(salarySurvey.seBetaJ[5] - 149.3) < 0.05)
+	assert(abs(salarySurvey.seBetaJ[6] - 131.2) < 0.05)
+
+	assert(abs(salarySurvey.tTest[0] - 141.7) < 0.05)
+	assert(abs(salarySurvey.tTest[1] -  89.3) < 0.05)
+	assert(abs(salarySurvey.tTest[2] +  16.4) < 0.05)
+	assert(abs(salarySurvey.tTest[3] +   3.6) < 0.05)
+	assert(abs(salarySurvey.tTest[4] -  68.7) < 0.05)
+	assert(abs(salarySurvey.tTest[5] +  20.5) < 0.05)
+	assert(abs(salarySurvey.tTest[6] -  14.0) < 0.05)
+
+	assert(abs(salarySurvey.rSq - 0.999) < 0.0005)
+	assert(abs(salarySurvey.sigmaHat - 173.8) < 0.5)
+
+
+
+
+	salarySurvey.regress(catVars=[2],intVars=[(2,4),(3,4)],badObs=[32])
+
+	pdb.set_trace()
+
+	assert(abs(salarySurvey.betaHat[0] - 11199.7) < 0.05)
+	assert(abs(salarySurvey.betaHat[1] -  498.41) < 0.005)
+	assert(abs(salarySurvey.betaHat[2] + 1741.28) < 0.005)
+	assert(abs(salarySurvey.betaHat[3] +  357.00) < 0.005)
+	assert(abs(salarySurvey.betaHat[4] - 7047.49) < 0.005)
+	assert(abs(salarySurvey.betaHat[5] + 3051.72) < 0.05)
+	assert(abs(salarySurvey.betaHat[6] - 1997.62) < 0.1)
+
+	assert(abs(salarySurvey.seBetaJ[0] - 79.07) < 0.005)
+	assert(abs(salarySurvey.seBetaJ[1] -  5.57) < 0.05)
+	assert(abs(salarySurvey.seBetaJ[2] - 105.30) < 0.05)
+	assert(abs(salarySurvey.seBetaJ[3] - 97.57) < 0.005)
+	assert(abs(salarySurvey.seBetaJ[4] - 102.6) < 0.05)
+	assert(abs(salarySurvey.seBetaJ[5] - 149.3) < 0.05)
+	assert(abs(salarySurvey.seBetaJ[6] - 131.2) < 0.05)
+
+	assert(abs(salarySurvey.tTest[0] - 141.7) < 0.05)
+	assert(abs(salarySurvey.tTest[1] -  89.3) < 0.05)
+	assert(abs(salarySurvey.tTest[2] +  16.4) < 0.05)
+	assert(abs(salarySurvey.tTest[3] +   3.6) < 0.05)
+	assert(abs(salarySurvey.tTest[4] -  68.7) < 0.05)
+	assert(abs(salarySurvey.tTest[5] +  20.5) < 0.05)
+	assert(abs(salarySurvey.tTest[6] -  14.0) < 0.05)
+
+	assert(abs(salarySurvey.rSq - 1) < 0.0005)
+	assert(abs(salarySurvey.sigmaHat - 67.13) < 0.05)
+
+	pdb.set_trace()
+
+
+
+
+
+
 
